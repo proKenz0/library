@@ -30,10 +30,10 @@ public class PersonDao {
                 .stream().findFirst().orElse(null);
     }
 
-    public Optional<Person> getByName(String name) {
+    public Person getByName(String name) {
         String query = "select * from person where name = ?";
         return jdbcTemplate.query(query, new Object[]{name}, new BeanPropertyRowMapper<>(Person.class))
-                .stream().findAny();
+                .stream().findAny().orElse(null);
     }
 
     public void create(Person person) {
