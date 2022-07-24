@@ -82,7 +82,7 @@ public class PeopleController {
 
         personDao.update(id, person);
 
-        return "redirect:/people";
+        return "redirect:/books";
     }
 
     @DeleteMapping("/{id}")
