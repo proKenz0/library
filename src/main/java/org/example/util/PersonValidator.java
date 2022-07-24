@@ -27,9 +27,9 @@ public class PersonValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Person newPerson = (Person) o;
 
-        Optional<Person> personOptional = personDAO.getByName(newPerson.getName());
+        Person prevPerson = personDAO.getByName(newPerson.getName());
 
-        if (personOptional.isPresent() && personOptional.get().getName().equals(newPerson.getName())) {
+        if (prevPerson != null && prevPerson.getId() != newPerson.getId()) {
             errors.rejectValue("name", "", "This name is already taken");
         }
     }
