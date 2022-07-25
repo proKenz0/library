@@ -8,6 +8,17 @@
 <div>
     <p th:text="${person.getName() + ', ' + person.getYearOfBirth()}"></p>
 
+    <p th:if="${#lists.isEmpty(books)}">Person hasn't taken any book yet</p>
+
+    <div th:if="${not #lists.isEmpty(books)}">
+        <hr>
+        <p style="font-weight: bold">Books:</p>
+        <div th:each="book : ${books}">
+            <a th:href="@{../books/{id}(id=${book.getId()})}"
+            th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getYear()}"></a>
+        </div>
+    </div>
+
     <hr>
 
     <form th:method="GET" th:action="@{/people/{id}/edit(id=${person.getId()})}" th:object="${person}">

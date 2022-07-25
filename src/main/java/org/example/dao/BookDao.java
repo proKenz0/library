@@ -29,6 +29,21 @@ public class BookDao {
                 .stream().findFirst().orElse(null);
     }
 
+    public Integer getPersonIdByBook(int bookId) {
+        String query = "select person_id from book where id = ?";
+        return jdbcTemplate.queryForObject(query, new Object[]{bookId}, Integer.class);
+    }
+
+    public void release(int id) {
+        String query = "update book set person_id = ? where id = ?";
+        jdbcTemplate.update(query, null, id);
+    }
+
+    public void give(int bookId, int personId) {
+        String query = "update book set person_id = ? where id = ?";
+        jdbcTemplate.update(query, personId, bookId);
+    }
+
     public void create(Book book) {
         String query = "insert into book(title, author, year) values (?, ?, ?)";
         jdbcTemplate.update(query, book.getTitle(), book.getAuthor(), book.getYear());
@@ -42,5 +57,10 @@ public class BookDao {
     public void delete(int id) {
         String query = "delete from book where id = ?";
         jdbcTemplate.update(query, id);
+    }
+
+    public List<Book> getPersonBooks(int personId) {
+        String query = "select * from book where person_id = ?";
+        return jdbcTemplate.query(query, new Object[]{personId}, new BeanPropertyRowMapper<>(Book.class));
     }
 }

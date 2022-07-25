@@ -1,7 +1,9 @@
 package org.example.controller;
 
 import org.example.dao.BookDao;
+import org.example.dao.PersonDao;
 import org.example.model.Book;
+import org.example.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,10 +17,12 @@ import javax.validation.Valid;
 public class BooksController {
 
     private final BookDao bookDao;
+    private final PersonDao personDao;
 
     @Autowired
-    public BooksController(BookDao bookDao) {
+    public BooksController(BookDao bookDao, PersonDao personDao) {
         this.bookDao = bookDao;
+        this.personDao = personDao;
     }
 
     @GetMapping
@@ -29,8 +33,16 @@ public class BooksController {
     }
 
     @GetMapping("/{id}")
-    public String getOne(@PathVariable int id, Model model) {
+    public String getOne(@PathVariable int id, @ModelAttribute("newOwner") Person person, Model model) {
         model.addAttribute("book", bookDao.getById(id));
+
+        Integer personId = bookDao.getPersonIdByBook(id);
+
+        if (personId == null) {
+            model.addAttribute("people", personDao.getAll());
+        } else {
+            model.addAttribute("personOwner", personDao.getById(personId));
+        }
 
         return "books/profile";
     }
@@ -71,6 +83,20 @@ public class BooksController {
         bookDao.update(id, book);
 
         return "redirect:/books";
+    }
+
+    @PatchMapping("/{id}/release")
+    public String release(@PathVariable int id) {
+        bookDao.release(id);
+
+        return "redirect:/books/" + id;
+    }
+
+    @PatchMapping("/{id}/give")
+    public String give(@PathVariable int id, @ModelAttribute("newOwner") Person newOwner) {
+        bookDao.give(id, newOwner.getId());
+
+        return "redirect:/books/" + id;
     }
 
     @DeleteMapping("/{id}")

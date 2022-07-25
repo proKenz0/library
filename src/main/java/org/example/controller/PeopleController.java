@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.dao.BookDao;
 import org.example.dao.PersonDao;
 import org.example.model.Person;
 import org.example.util.PersonValidator;
@@ -17,11 +18,13 @@ import java.util.List;
 public class PeopleController {
 
     private final PersonDao personDao;
+    private final BookDao bookDao;
     private final PersonValidator personValidator;
 
     @Autowired
-    public PeopleController(PersonDao personDao, PersonValidator personValidator) {
+    public PeopleController(PersonDao personDao, BookDao bookDao, PersonValidator personValidator) {
         this.personDao = personDao;
+        this.bookDao = bookDao;
         this.personValidator = personValidator;
     }
 
@@ -39,6 +42,7 @@ public class PeopleController {
     @GetMapping("/{id}")
     public String get(@PathVariable int id, Model model) {
         model.addAttribute("person", personDao.getById(id));
+        model.addAttribute("books", bookDao.getPersonBooks(id));
 
         return "people/profile";
     }
