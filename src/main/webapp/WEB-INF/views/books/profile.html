@@ -7,7 +7,26 @@
 <body>
 <p th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getYear()}"></p>
 
-<br>
+<div th:if="${#lists.isEmpty(people)}">
+    <p th:text="${'Book is now with: ' + personOwner.getName()}"></p>
+    <form th:method="PATCH" th:action="@{/books/{id}/release(id=${book.getId()})}">
+        <input type="submit" value="Release book">
+    </form>
+</div>
+
+<div th:if="${not #lists.isEmpty(people)}">
+    <p>This book is available. To whom give a book?</p>
+    <form th:method="PATCH" th:action="@{/books/{id}/give(id=${book.getId()})}">
+        <label for="newOwner">Choose person </label>
+        <select id="newOwner" th:object="${newOwner}" th:field="*{id}">
+<!--        <select id="person">-->
+            <option th:each="person : ${people}" th:value="${person.getId()}"
+                    th:text="${person.getName()}"></option>
+        </select>
+        <input type="submit" value="Give book">
+    </form>
+</div>
+
 <hr>
 
 <form th:method="GET" th:action="@{/books/{id}/edit(id=${book.getId()})}">
